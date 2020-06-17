@@ -25,6 +25,12 @@ Microservicio de Autentificación
 	- [Eliminar Provincia](#eliminar-provincia)
 	- [Listar Provincias](#listar-provincias)
 	
+- [Publicidades](#publicidades)
+	- [Buscar una publicidad](#buscar-una-publicidad)
+	- [Crear una publicidad](#crear-una-publicidad)
+	- [Eliminar una publicidad](#eliminar-una-publicidad)
+	- [Recupera las publicidades](#recupera-las-publicidades)
+	
 - [Seguridad](#seguridad)
 	- [Cambiar Password](#cambiar-password)
 	- [Deshabilitar Usuario](#deshabilitar-usuario)
@@ -853,6 +859,252 @@ Provincia
    "id": ""
   }, ...
 ]
+```
+
+
+### Error Response
+
+400 Bad Request
+
+```
+HTTP/1.1 400 Bad Request
+{
+   "messages" : [
+     {
+       "path" : "{Nombre de la propiedad}",
+       "message" : "{Motivo del error}"
+     },
+     ...
+  ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+# <a name='publicidades'></a> Publicidades
+
+## <a name='buscar-una-publicidad'></a> Buscar una publicidad
+[Back to top](#top)
+
+<p>Buscar una publicidad por ID.</p>
+
+	POST /v1/promotion/:promotionId
+
+
+
+### Examples
+
+Header Autorización
+
+```
+Authorization=bearer {token}
+```
+
+
+### Success Response
+
+Publicidad
+
+```
+{
+  "title": "Dia del Padre",
+  "description": "Comprale a tu papa lo que siempre ha querido!"
+  "redirectLink": "",
+  "id": "",
+}
+```
+
+
+### Error Response
+
+401 Unauthorized
+
+```
+HTTP/1.1 401 Unauthorized
+```
+400 Bad Request
+
+```
+HTTP/1.1 400 Bad Request
+{
+   "messages" : [
+     {
+       "path" : "{Nombre de la propiedad}",
+       "message" : "{Motivo del error}"
+     },
+     ...
+  ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+## <a name='crear-una-publicidad'></a> Crear una publicidad
+[Back to top](#top)
+
+<p>Crea o actualiza una publicidad.</p>
+
+	POST /v1/promotion
+
+
+
+### Examples
+
+Publicidad
+
+```
+{
+  "title": "Nombre de la publicidad",
+  "description": "Breve descripcion de la publicidad",
+  "redirectLink": "url a la pagina donde se puede ver la publicidad completa",
+  "enabled": [true|false]
+}
+```
+Header Autorización
+
+```
+Authorization=bearer {token}
+```
+
+
+### Success Response
+
+Publicidad
+
+```
+{
+  "title": "Dia del Padre",
+  "description": "Comprale a tu papa lo que siempre ha querido!"
+  "redirectLink": "",
+  "id": "",
+  "enabled": [true]
+}
+```
+
+
+### Error Response
+
+401 Unauthorized
+
+```
+HTTP/1.1 401 Unauthorized
+```
+400 Bad Request
+
+```
+HTTP/1.1 400 Bad Request
+{
+   "messages" : [
+     {
+       "path" : "{Nombre de la propiedad}",
+       "message" : "{Motivo del error}"
+     },
+     ...
+  ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+## <a name='eliminar-una-publicidad'></a> Eliminar una publicidad
+[Back to top](#top)
+
+<p>Elimina una publicidad por ID.</p>
+
+	DELETE /v1/promotion/:promotionId
+
+
+
+### Examples
+
+Header Autorización
+
+```
+Authorization=bearer {token}
+```
+
+
+### Success Response
+
+Response
+
+```
+HTTP/1.1 200 OK
+```
+
+
+### Error Response
+
+401 Unauthorized
+
+```
+HTTP/1.1 401 Unauthorized
+```
+400 Bad Request
+
+```
+HTTP/1.1 400 Bad Request
+{
+   "messages" : [
+     {
+       "path" : "{Nombre de la propiedad}",
+       "message" : "{Motivo del error}"
+     },
+     ...
+  ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+## <a name='recupera-las-publicidades'></a> Recupera las publicidades
+[Back to top](#top)
+
+<p>Retorna una lista de todas las publicidades disponibles.</p>
+
+	GET /v1/promotion
+
+
+
+
+
+### Success Response
+
+Publicidad
+
+```
+[ {
+   "title": "Dia del Padre",
+   "description": "Comprale a tu papa lo que siempre ha querido!"
+   "id": "",
+   "redirectLink": ""
+  }, ...
+]
+```
+Response
+
+```
+HTTP/1.1 200 OK
 ```
 
 
