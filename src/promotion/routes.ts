@@ -1,6 +1,8 @@
 "use strict";
 
 import * as express from "express";
+import * as error from "../server/error";
+import * as imageService from "../image/service";
 import { onlyLoggedIn } from "../token/passport";
 import * as user from "../user/service";
 import { ISessionRequest } from "../user/service";
@@ -18,6 +20,10 @@ export function initModule(app: express.Express) {
   app.route("/v1/promotion/:promotionId")
     .get(read)
     .delete(onlyLoggedIn, remove);
+
+  app
+    .route("/v1/promotion/picture")
+    .post(onlyLoggedIn, updatePromotionPicture);
 }
 
 /**
@@ -138,4 +144,53 @@ async function remove(req: ISessionRequest, res: express.Response) {
   await user.hasPermission(req.user.user_id, "admin");
   await service.invalidate(req.params.promotionId);
   res.send();
+}
+
+/**
+ * @api {post} /v1/promotion/picture Guardar Imagen de la publicidad
+ * @apiName Guardar Imagen de Publicidad
+ * @apiGroup Publicidades
+ *
+ * @apiDescription Guarda una imagen del Banner de publicidad en redis y el id en mongo.
+ *
+ * @apiExample {json} Body
+ *    {
+ *      "image" : "Base 64 Image Text"
+ *    }
+ *
+ * @apiSuccessExample {json} Response
+ *    {
+ *      "id": "id de imagen"
+ *    }
+ *
+ * @apiUse AuthHeader
+ * @apiUse ParamValidationErrors
+ * @apiUse OtherErrors
+ */
+async function updatePromotionPicture(req: ISessionRequest, res: express.Response) {
+  const imageResult = await imageService.create(req.body);
+  console.log("imageResult id");
+  console.log(imageResult.id);
+
+  await validateUpdatePromotionPicture(imageResult.id);
+
+  res.json({
+    id: imageResult.id
+  });
+}
+
+async function validateUpdatePromotionPicture(imageId: string): Promise<void> {
+  const result: error.ValidationErrorMessage = {
+    messages: []
+  };
+
+  if (!imageId || imageId.length <= 0) {
+    result.messages.push({ path: "image", message: "Imagen inválida." });
+  }
+
+  if (result.messages.length > 0) {
+    return Promise.reject(result);
+  }
+
+  return Promise.resolve();
 }

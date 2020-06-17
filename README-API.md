@@ -29,6 +29,7 @@ Microservicio de Autentificación
 	- [Buscar una publicidad](#buscar-una-publicidad)
 	- [Crear una publicidad](#crear-una-publicidad)
 	- [Eliminar una publicidad](#eliminar-una-publicidad)
+	- [Guardar Imagen de la publicidad](#guardar-imagen-de-la-publicidad)
 	- [Recupera las publicidades](#recupera-las-publicidades)
 	
 - [Seguridad](#seguridad)
@@ -1045,6 +1046,71 @@ Response
 
 ```
 HTTP/1.1 200 OK
+```
+
+
+### Error Response
+
+401 Unauthorized
+
+```
+HTTP/1.1 401 Unauthorized
+```
+400 Bad Request
+
+```
+HTTP/1.1 400 Bad Request
+{
+   "messages" : [
+     {
+       "path" : "{Nombre de la propiedad}",
+       "message" : "{Motivo del error}"
+     },
+     ...
+  ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+## <a name='guardar-imagen-de-la-publicidad'></a> Guardar Imagen de la publicidad
+[Back to top](#top)
+
+<p>Guarda una imagen del Banner de publicidad en redis y el id en mongo.</p>
+
+	POST /v1/promotion/picture
+
+
+
+### Examples
+
+Body
+
+```
+{
+  "image" : "Base 64 Image Text"
+}
+```
+Header Autorización
+
+```
+Authorization=bearer {token}
+```
+
+
+### Success Response
+
+Response
+
+```
+{
+  "id": "id de imagen"
+}
 ```
 
 
