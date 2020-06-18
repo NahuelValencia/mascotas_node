@@ -17,6 +17,9 @@ export function initModule(app: express.Express) {
     .get(onlyLoggedIn, list)
     .post(onlyLoggedIn, create);
 
+  app.route("/v1/ownPromotion")
+    .get(onlyLoggedIn, findByCurrentUser);
+
   app.route("/v1/promotion/:promotionId")
     .get(read)
     .delete(onlyLoggedIn, remove);
@@ -81,6 +84,7 @@ async function list(req: ISessionRequest, res: express.Response) {
  *      "description": "Comprale a tu papa lo que siempre ha querido!"
  *      "redirectLink": "",
  *      "id": "",
+ *      "owner": "id del usuario que la crea"
  *      "enabled": [true]
  *    }
  *
@@ -89,12 +93,9 @@ async function list(req: ISessionRequest, res: express.Response) {
  * @apiUse OtherErrors
  */
 async function create(req: ISessionRequest, res: express.Response) {
-  console.log("request body");
-  console.log(req.body);
   await user.hasPermission(req.user.user_id, "admin");
-  const result = await service.create(req.body);
-  console.log("result");
-  console.log(result);
+  const result = await service.create(req.user.user_id, req.body);
+
   res.json({ id: result });
 }
 
@@ -193,4 +194,39 @@ async function validateUpdatePromotionPicture(imageId: string): Promise<void> {
   }
 
   return Promise.resolve();
+}
+
+/**
+ * @api {get} /v1/ownPromotion Lista publicidad de un usuario
+ * @apiName Listar publicidades de un usuario
+ * @apiGroup Publicidades
+ *
+ * @apiDescription Obtiene un listado de las publicidades del usuario actual.
+ *
+ * @apiSuccessExample {json} Publicidad
+ *  [
+ *    {
+ *      "title": "Dia del Padre",
+ *      "description": "Comprale a tu papa lo que siempre ha querido!"
+ *      "redirectLink": "",
+ *      "id": ""
+ *      "imageId": "",
+ *    }, ...
+ *  ]
+ *
+ * @apiUse AuthHeader
+ * @apiUse 200OK
+ * @apiUse OtherErrors
+ */
+async function findByCurrentUser(req: ISessionRequest, res: express.Response) {
+  const result = await service.findByCurrentUser(req.user.user_id);
+  res.json(result.map(item => {
+    return {
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      redirectLink: item.redirectLink,
+      imageId: item.imageId
+    };
+  }));
 }

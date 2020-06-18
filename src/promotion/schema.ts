@@ -8,6 +8,7 @@ export interface IPublicity extends mongoose.Document {
   description: string;
   redirectLink: string;
   imageId: string;
+  owner: mongoose.Schema.Types.ObjectId;
   enabled: Boolean;
 }
 
@@ -35,6 +36,11 @@ export const PublicitySchema = new mongoose.Schema({
     default: "",
     trim: true,
     required: "Toda publicidad debe tener una image que la represente."
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: "Toda publicidad debe tener una dueno"
   },
   enabled: {
     type: Boolean,
