@@ -2,10 +2,30 @@
 import { IPublicity, Publicity } from "./schema";
 import * as error from "../server/error";
 
+const mongoose = require("mongoose");
+
 export async function list(): Promise<Array<IPublicity>> {
     try {
         const result = await Publicity.find({ enabled: true }).exec();
         return Promise.resolve(result);
+    } catch (err) {
+        return Promise.reject(err);
+    }
+}
+
+export async function create(userId: string, body: IPublicity): Promise<string> {
+    try {
+        const validated = await validateCreate(body);
+
+        const publicity = new Publicity();
+        publicity.title = validated.title;
+        publicity.description = validated.description;
+        publicity.redirectLink = validated.redirectLink;
+        publicity.imageId = validated.imageId;
+        publicity.owner = mongoose.Types.ObjectId.createFromHexString(userId);
+
+        const saved = await publicity.save();
+        return Promise.resolve(saved._id.toHexString());
     } catch (err) {
         return Promise.reject(err);
     }
@@ -33,24 +53,6 @@ async function validateCreate(body: IPublicity): Promise<IPublicity> {
     }
 
     return Promise.resolve(body);
-}
-
-
-export async function create(body: IPublicity): Promise<string> {
-    try {
-        const validated = await validateCreate(body);
-
-        const publicity = new Publicity();
-        publicity.title = validated.title;
-        publicity.description = validated.description;
-        publicity.redirectLink = validated.redirectLink;
-        publicity.imageId = validated.imageId;
-
-        const saved = await publicity.save();
-        return Promise.resolve(saved._id.toHexString());
-    } catch (err) {
-        return Promise.reject(err);
-    }
 }
 
 export async function read(id: string): Promise<IPublicity> {
@@ -82,6 +84,18 @@ export async function invalidate(id: string): Promise<void> {
         await publicity.save();
 
         return Promise.resolve();
+    } catch (err) {
+        return Promise.reject(err);
+    }
+}
+
+export async function findByCurrentUser(userId: string): Promise<Array<IPublicity>> {
+    try {
+        const result = await Publicity.find({
+            owner: mongoose.Types.ObjectId(userId),
+            enabled: true
+        }).exec();
+        return Promise.resolve(result);
     } catch (err) {
         return Promise.reject(err);
     }
